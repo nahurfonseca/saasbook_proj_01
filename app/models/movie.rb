@@ -1,5 +1,6 @@
 class Movie < ActiveRecord::Base
   def self.all_ratings
-    Movie.group(:rating).all.collect { |m| m.rating }
+    debugger
+    Movie.select(:rating).group(:rating).collect { |m| m.rating }
   end
 end
