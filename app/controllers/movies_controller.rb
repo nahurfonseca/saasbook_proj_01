@@ -7,14 +7,28 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if (params.include? :sort_by) and 
-       (['title', 'release_date'].include? params[:sort_by])
-      @movies = Movie.order(params['sort_by']).all
-      @hilite = params[:sort_by]
-    else
-      @movies = Movie.all
-      @hilite = 'none'
+    @all_ratings = Movie.all_ratings
+    case
+      when (params[:ratings] and params[:sort_by])
+        @movies = Movie.where('rating in (?)', params[:ratings].keys).order(params[:sort_by]).all
+      when params[:ratings]
+        @movies = Movie.where('rating in (?)', params[:ratings].keys).all
+      when params[:sort_by]
+        @movies = Movie.order(params[:sort_by]).all
+      else
+        @movies = Movie.all
     end
+    @header_class = {}
+    # prepare header column class
+    if (params[:sort_by])
+      @header_class[params['sort_by']] = 'hilite'
+    end
+    # prepare checkbox checked options
+    @checked_ratings = {}
+    if (params[:ratings])
+      params['ratings'].each { |k,v| @checked_ratings[k]=true }
+    end
+    p @checked_ratings.inspect
   end
 
   def new
