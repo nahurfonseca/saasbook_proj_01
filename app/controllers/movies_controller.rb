@@ -1,4 +1,6 @@
 class MoviesController < ApplicationController
+  @@statefull_params = [:ratings, :sort_by]
+  attr_accessor :statefull_params
 
   def show
     id = params[:id] # retrieve movie ID from URI route
@@ -7,6 +9,16 @@ class MoviesController < ApplicationController
   end
 
   def index
+    # remember session, if no params
+    @need_redirect = false
+    @@statefull_params.each { |p|
+        if session[p] and !params[p]
+          params[p] = session[p]
+          @need_redirect = true
+        end }
+    if @need_redirect
+      redirect_to movies_path(params)
+    end
     # load Model from DB
     case
       when (params[:ratings] and params[:sort_by])
@@ -25,6 +37,11 @@ class MoviesController < ApplicationController
     if (params[:ratings])
       params['ratings'].each { |k,v| @checked_ratings[k]=true }
     end
+    # save session
+    @@statefull_params.each { |p|
+        if params[p]
+          session[p] = params[p] 
+        end }
   end
 
   def new
