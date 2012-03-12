@@ -18,17 +18,13 @@ class MoviesController < ApplicationController
       else
         @movies = Movie.all
     end
-    @header_class = {}
     # prepare header column class
-    if (params[:sort_by])
-      @header_class[params['sort_by']] = 'hilite'
-    end
+    @sorted = params[:sort_by]
     # prepare checkbox checked options
     @checked_ratings = {}
     if (params[:ratings])
       params['ratings'].each { |k,v| @checked_ratings[k]=true }
     end
-    p @checked_ratings.inspect
   end
 
   def new
