@@ -7,7 +7,7 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.all_ratings
+    # load Model from DB
     case
       when (params[:ratings] and params[:sort_by])
         @movies = Movie.where('rating in (?)', params[:ratings].keys).order(params[:sort_by]).all
@@ -18,9 +18,9 @@ class MoviesController < ApplicationController
       else
         @movies = Movie.all
     end
-    # prepare header column class
+    # prepare instance variables used in view
+    @all_ratings = Movie.all_ratings
     @sorted = params[:sort_by]
-    # prepare checkbox checked options
     @checked_ratings = {}
     if (params[:ratings])
       params['ratings'].each { |k,v| @checked_ratings[k]=true }
